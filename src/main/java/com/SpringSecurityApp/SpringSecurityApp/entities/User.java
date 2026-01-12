@@ -2,10 +2,7 @@ package com.SpringSecurityApp.SpringSecurityApp.entities;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.internal.build.AllowNonPortable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +17,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
+@Builder
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +27,10 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
     private String password;
+    private String name;
 
+    public User(long l, String mail, String number) {
+    }
 
 
     @Override

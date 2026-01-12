@@ -2,8 +2,10 @@ package com.SpringSecurityApp.SpringSecurityApp.advices;
 
 
 import com.SpringSecurityApp.SpringSecurityApp.exception.ResourceNotFoundException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,7 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiErr> handleResourceNotFoundException(ResourceNotFoundException exception){
         ApiErr apiErr = new ApiErr(exception.getLocalizedMessage(),HttpStatus.NOT_FOUND);
-
+//        System.out.println("not found");
         return new ResponseEntity<>(apiErr,HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -55,4 +57,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiErr, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiErr> handleAuthenticationException(AuthenticationException ex){
+        ApiErr apiErr= new ApiErr(ex.getLocalizedMessage(),HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(apiErr,HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiErr> handleJwtException(JwtException ex)
+    {
+        ApiErr apiErr= new ApiErr(ex.getLocalizedMessage(),HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(apiErr,HttpStatus.UNAUTHORIZED);
+
+    }
 }
