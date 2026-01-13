@@ -1,5 +1,6 @@
 package com.SpringSecurityApp.SpringSecurityApp.config;
 
+import com.SpringSecurityApp.SpringSecurityApp.entities.enums.Permission;
 import com.SpringSecurityApp.SpringSecurityApp.entities.enums.Role;
 import com.SpringSecurityApp.SpringSecurityApp.filters.JwtAuthFilter;
 import com.SpringSecurityApp.SpringSecurityApp.handler.OAuth2SuccessHandler;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,12 +19,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.SpringSecurityApp.SpringSecurityApp.entities.enums.Permission.*;
 import static com.SpringSecurityApp.SpringSecurityApp.entities.enums.Role.ADMIN;
 import static com.SpringSecurityApp.SpringSecurityApp.entities.enums.Role.CREATOR;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
@@ -36,7 +40,16 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers(publicRoutes).permitAll()
                         .requestMatchers(HttpMethod.GET,"/posts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/posts/**").hasAnyRole(ADMIN.name(),CREATOR.name())
+                        .requestMatchers(HttpMethod.POST,"/posts/**")
+                        .hasAnyRole(ADMIN.name(),CREATOR.name())
+                        .requestMatchers(HttpMethod.POST,"/posts/**")
+                        .hasAnyAuthority(POST_CREATE.name())
+//                        .requestMatchers(HttpMethod.GET,"/posts/**")
+//                        .hasAnyAuthority(POST_VIEW.name())
+                        .requestMatchers(HttpMethod.PUT,"/posts/**")
+                        .hasAnyAuthority(POST_UPDATE.name())
+                        .requestMatchers(HttpMethod.DELETE,"/posts/**")
+                        .hasAnyAuthority(POST_DELETE.name())
                         .anyRequest().authenticated())
                 .csrf(csrfConfig-> csrfConfig.disable())
                 .sessionManagement(sessionConfig->sessionConfig

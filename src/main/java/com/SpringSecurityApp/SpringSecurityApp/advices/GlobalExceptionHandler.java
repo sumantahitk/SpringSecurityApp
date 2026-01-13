@@ -5,11 +5,13 @@ import com.SpringSecurityApp.SpringSecurityApp.exception.ResourceNotFoundExcepti
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.rmi.AccessException;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -69,5 +71,11 @@ public class GlobalExceptionHandler {
         ApiErr apiErr= new ApiErr(ex.getLocalizedMessage(),HttpStatus.UNAUTHORIZED);
         return new ResponseEntity<>(apiErr,HttpStatus.UNAUTHORIZED);
 
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiErr> handleAccessDeniedException(AccessDeniedException ex){
+        ApiErr apiErr= new ApiErr(ex.getLocalizedMessage(),HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(apiErr,HttpStatus.FORBIDDEN);
     }
 }

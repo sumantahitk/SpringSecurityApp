@@ -15,4 +15,5 @@ public class PostDTO {
     @Size(min=3,max=100,message = "Number of characters in Name should be in the range of 3-100")
     private String title;
     private  String description;
+    private  UserDTO author;
 }
